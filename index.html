@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trivial del grupo</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #f9fafb;
+      --muted: #cbd5e1;
+      --accent: #22c55e;
+      --accent-2: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 860px;
+    }
+
+    .card {
+      background: rgba(17, 24, 39, 0.95);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    }
+
+    h1, h2 {
+      margin: 0 0 12px;
+      line-height: 1.1;
+    }
+
+    p { color: var(--muted); line-height: 1.6; }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(34, 197, 94, 0.14);
+      color: #bbf7d0;
+      font-size: 14px;
+      margin-bottom: 14px;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    input[type="password"], input[type="text"] {
+      flex: 1;
+      min-width: 220px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: var(--panel-2);
+      color: var(--text);
+      font-size: 16px;
+      outline: none;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      background: var(--accent);
+      color: #052e16;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover { filter: brightness(1.05); }
+
+    .secondary {
+      background: var(--accent-2);
+      color: #3b2300;
+    }
+
+    .hidden { display: none; }
+
+    .status {
+      margin-top: 14px;
+      min-height: 24px;
+      font-weight: 700;
+    }
+
+    .ok { color: #86efac; }
+    .error { color: #fca5a5; }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, 0.16);
+      color: #fde68a;
+      font-size: 14px;
+    }
+
+    .question-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 22px;
+      margin-top: 16px;
+    }
+
+    .question-label {
+      color: #93c5fd;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    .question-text {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 18px;
+    }
+
+    .hint {
+      margin-top: 12px;
+      color: #d1fae5;
+      font-size: 14px;
+    }
+
+    .letters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .letter-box {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .final-card {
+      text-align: center;
+      padding: 10px 0 4px;
+    }
+
+    .location {
+      font-size: 44px;
+      font-weight: 900;
+      color: #86efac;
+      letter-spacing: 0.08em;
+      margin: 18px 0;
+      word-break: break-word;
+    }
+
+    .subtle {
+      color: #cbd5e1;
+      font-size: 15px;
+    }
+
+    @media (max-width: 640px) {
+      .card { padding: 20px; }
+      .question-text { font-size: 20px; }
+      .location { font-size: 32px; }
+      .letter-box { width: 46px; height: 46px; font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section id="loginScreen" class="card">
+      <div class="badge">Acceso restringido</div>
+      <h1>Trivial del grupo</h1>
+      <p>
+        Solo puede jugar quien tenga la clave. Introduce el código para empezar.
+      </p>
+      <div class="row">
+        <input id="passwordInput" type="password" placeholder="Introduce la contraseña" maxlength="10" />
+        <button id="loginBtn">Entrar</button>
+      </div>
+      <div id="loginStatus" class="status"></div>
+    </section>
+
+    <section id="gameScreen" class="card hidden">
+      <div class="topbar">
+        <div>
+          <div class="badge">Prueba desbloqueada</div>
+          <h2>Conoces a tu grupo... o eso crees</h2>
+        </div>
+        <div class="pill"><span id="counter">Pregunta 1 de 7</span></div>
+      </div>
+
+      <p>
+        Responde una pregunta sobre cada invitado. La primera letra de cada respuesta correcta formará la ubicación final.
+      </p>
+
+      <div class="question-box">
+        <div id="questionLabel" class="question-label">Invitado</div>
+        <div id="questionText" class="question-text"></div>
+        <div class="row">
+          <input id="answerInput" type="text" placeholder="Escribe tu respuesta" autocomplete="off" />
+          <button id="answerBtn">Responder</button>
+          <button id="hintBtn" class="secondary" type="button">Pista</button>
+        </div>
+        <div id="answerStatus" class="status"></div>
+        <div id="hintText" class="hint"></div>
+      </div>
+
+      <div class="letters" id="lettersContainer"></div>
+    </section>
+
+    <section id="finalScreen" class="card hidden">
+      <div class="badge">Ubicación descubierta</div>
+      <div class="final-card">
+        <h2>Lo has conseguido</h2>
+        <p>Las primeras letras de todas tus respuestas forman esta ubicación:</p>
+        <div id="finalLocation" class="location"></div>
+        <p class="subtle">Puedes cambiar preguntas, respuestas y ubicación editando el bloque <strong>questions</strong> del código.</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const ACCESS_CODE = "831";
+
+    // Cambia estas preguntas por las reales de vuestro grupo.
+    // La primera letra de cada respuesta correcta formará la ubicación final.
+    const questions = [
+      {
+        person: "Laura",
+        question: "¿Con qué letra empieza el nombre de la persona que fue a recogerte?",
+        answer: "Laura",
+        hint: "Es quien organiza el cumple y te llevó hasta el sitio."
+      },
+      {
+        person: "Valeria",
+        question: "¿Quién fue con Laura a buscar el regalo al principio?",
+        answer: "Valeria",
+        hint: "Su nombre empieza por V."
+      },
+      {
+        person: "Alex",
+        question: "¿Qué invitado dijo que había visto a alguien en la cocina?",
+        answer: "Alex",
+        hint: "Empieza por A."
+      },
+      {
+        person: "Aitor",
+        question: "¿Qué invitado soltó que todo era demasiado raro?",
+        answer: "Aitor",
+        hint: "Su nombre empieza por Ai."
+      },
+      {
+        person: "Piero",
+        question: "¿Qué invitado fue el más calmado y lógico al reaccionar?",
+        answer: "Piero",
+        hint: "Empieza por P."
+      },
+      {
+        person: "Elvin",
+        question: "¿Qué invitado reforzó la tensión diciendo que nada tenía sentido?",
+        answer: "Elvin",
+        hint: "Empieza por E."
+      },
+      {
+        person: "Vane",
+        question: "¿Qué invitada encontró el QR o la pista siguiente?",
+        answer: "Vane",
+        hint: "Empieza por V."
+      }
+    ];
+
+    const loginScreen = document.getElementById("loginScreen");
+    const gameScreen = document.getElementById("gameScreen");
+    const finalScreen = document.getElementById("finalScreen");
+
+    const passwordInput = document.getElementById("passwordInput");
+    const loginBtn = document.getElementById("loginBtn");
+    const loginStatus = document.getElementById("loginStatus");
+
+    const questionLabel = document.getElementById("questionLabel");
+    const questionText = document.getElementById("questionText");
+    const answerInput = document.getElementById("answerInput");
+    const answerBtn = document.getElementById("answerBtn");
+    const hintBtn = document.getElementById("hintBtn");
+    const answerStatus = document.getElementById("answerStatus");
+    const hintText = document.getElementById("hintText");
+    const counter = document.getElementById("counter");
+    const lettersContainer = document.getElementById("lettersContainer");
+    const finalLocation = document.getElementById("finalLocation");
+
+    let currentIndex = 0;
+    let collectedLetters = [];
+
+    function normalize(text) {
+      return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+    }
+
+    function renderLetters() {
+      lettersContainer.innerHTML = "";
+      questions.forEach((q, index) => {
+        const box = document.createElement("div");
+        box.className = "letter-box";
+        box.textContent = collectedLetters[index] || "?";
+        lettersContainer.appendChild(box);
+      });
+    }
+
+    function loadQuestion() {
+      const q = questions[currentIndex];
+      counter.textContent = `Pregunta ${currentIndex + 1} de ${questions.length}`;
+      questionLabel.textContent = `Pregunta sobre ${q.person}`;
+      questionText.textContent = q.question;
+      answerInput.value = "";
+      answerStatus.textContent = "";
+      answerStatus.className = "status";
+      hintText.textContent = "";
+      answerInput.focus();
+      renderLetters();
+    }
+
+    function finishGame() {
+      gameScreen.classList.add("hidden");
+      finalScreen.classList.remove("hidden");
+      finalLocation.textContent = collectedLetters.join("");
+    }
+
+    function checkAnswer() {
+      const userAnswer = normalize(answerInput.value);
+      const correctAnswer = normalize(questions[currentIndex].answer);
+
+      if (!userAnswer) {
+        answerStatus.textContent = "Escribe una respuesta antes de continuar.";
+        answerStatus.className = "status error";
+        return;
+      }
+
+      if (userAnswer !== correctAnswer) {
+        answerStatus.textContent = "No es correcta. Prueba otra vez.";
+        answerStatus.className = "status error";
+        return;
+      }
+
+      const firstLetter = questions[currentIndex].answer.charAt(0).toUpperCase();
+      collectedLetters[currentIndex] = firstLetter;
+      answerStatus.textContent = `Correcto. Has conseguido la letra ${firstLetter}.`;
+      answerStatus.className = "status ok";
+      renderLetters();
+
+      setTimeout(() => {
+        currentIndex += 1;
+        if (currentIndex >= questions.length) {
+          finishGame();
+        } else {
+          loadQuestion();
+        }
+      }, 900);
+    }
+
+    loginBtn.addEventListener("click", () => {
+      if (passwordInput.value === ACCESS_CODE) {
+        loginStatus.textContent = "Acceso concedido.";
+        loginStatus.className = "status ok";
+        setTimeout(() => {
+          loginScreen.classList.add("hidden");
+          gameScreen.classList.remove("hidden");
+          loadQuestion();
+        }, 350);
+      } else {
+        loginStatus.textContent = "Código incorrecto.";
+        loginStatus.className = "status error";
+      }
+    });
+
+    passwordInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") loginBtn.click();
+    });
+
+    answerBtn.addEventListener("click", checkAnswer);
+
+    answerInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") checkAnswer();
+    });
+
+    hintBtn.addEventListener("click", () => {
+      hintText.textContent = questions[currentIndex].hint;
+    });
+
+    renderLetters();
+  </script>
+</body>
+</html>
