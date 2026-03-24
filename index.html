@@ -178,6 +178,63 @@
       padding: 10px 0 4px;
     }
 
+    .summary-list {
+      margin-top: 22px;
+      text-align: left;
+      display: grid;
+      gap: 12px;
+    }
+
+    .summary-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 14px 16px;
+      color: var(--text);
+      line-height: 1.5;
+      font-size: 17px;
+    }
+
+    .highlight-letter {
+      color: #86efac;
+      font-weight: 900;
+      font-size: 1.1em;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      opacity: 0;
+      display: inline-block;
+      transform: translateY(10px) scale(0.96);
+      animation: revealLetter 0.45s ease forwards;
+    }
+
+    .summary-item {
+      opacity: 0;
+      transform: translateY(8px);
+      animation: revealItem 0.45s ease forwards;
+    }
+
+    @keyframes revealLetter {
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.96);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes revealItem {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     .location {
       font-size: 44px;
       font-weight: 900;
@@ -206,10 +263,10 @@
       <div class="badge">Acceso restringido</div>
       <h1>Trivial del grupo</h1>
       <p>
-        Solo puede jugar quien tenga la clave. Introduce el código para empezar.
+       ¿Estás seguro de que nos conoces?. Ha habido un giro de los acontecimientos, ¿no crees?.
       </p>
       <div class="row">
-        <input id="passwordInput" type="password" placeholder="Introduce la contraseña" maxlength="10" />
+        <input id="passwordInput" type="password" placeholder="Introduce la contraseña para empezar" maxlength="10" />
         <button id="loginBtn">Entrar</button>
       </div>
       <div id="loginStatus" class="status"></div>
@@ -221,11 +278,11 @@
           <div class="badge">Prueba desbloqueada</div>
           <h2>Conoces a tu grupo... o eso crees</h2>
         </div>
-        <div class="pill"><span id="counter">Pregunta 1 de 7</span></div>
+        <div class="pill"><span id="counter">Pregunta 1 de 10</span></div>
       </div>
 
       <p>
-        Responde una pregunta sobre cada invitado. La primera letra de cada respuesta correcta formará la ubicación final.
+        Responde una pregunta sobre cada invitado, aunque no todos están aquí. Presta atención y cuida tu ortografía. Mucha suerte.
       </p>
 
       <div class="question-box">
@@ -240,14 +297,15 @@
         <div id="hintText" class="hint"></div>
       </div>
 
-      <div class="letters" id="lettersContainer"></div>
+      <div class="letters" id="lettersContainer" style="opacity:0.5;"></div>
+      <div id="answersSummary" class="hidden" style="margin-top:20px;"></div>
     </section>
 
     <section id="finalScreen" class="card hidden">
       <div class="badge">Ubicación descubierta</div>
       <div class="final-card">
         <h2>Lo has conseguido</h2>
-        <p>Las primeras letras de todas tus respuestas forman esta ubicación:</p>
+        <p>¿Ves algo raro en las palabras?:</p>
         <div id="finalLocation" class="location"></div>
         <p class="subtle">Puedes cambiar preguntas, respuestas y ubicación editando el bloque <strong>questions</strong> del código.</p>
       </div>
@@ -261,46 +319,64 @@
     // La primera letra de cada respuesta correcta formará la ubicación final.
     const questions = [
       {
-        person: "Laura",
-        question: "¿Con qué letra empieza el nombre de la persona que fue a recogerte?",
-        answer: "Laura",
-        hint: "Es quien organiza el cumple y te llevó hasta el sitio."
-      },
-      {
-        person: "Valeria",
-        question: "¿Quién fue con Laura a buscar el regalo al principio?",
-        answer: "Valeria",
-        hint: "Su nombre empieza por V."
-      },
-      {
-        person: "Alex",
-        question: "¿Qué invitado dijo que había visto a alguien en la cocina?",
-        answer: "Alex",
-        hint: "Empieza por A."
-      },
-      {
-        person: "Aitor",
-        question: "¿Qué invitado soltó que todo era demasiado raro?",
+        person: "1",
+        question: "Persona que tuvo un trabajo muy raro relacionado con pitos",
         answer: "Aitor",
-        hint: "Su nombre empieza por Ai."
+        hint: "Persona con la que viajaste a Nápoles."
       },
       {
-        person: "Piero",
-        question: "¿Qué invitado fue el más calmado y lógico al reaccionar?",
+        person: "2",
+        question: "Persona que tenía pelazo Pantene",
         answer: "Piero",
-        hint: "Empieza por P."
+        hint: "Daltónico."
       },
       {
-        person: "Elvin",
-        question: "¿Qué invitado reforzó la tensión diciendo que nada tenía sentido?",
+        person: "3",
+        question: "Persona a la que le gustan los vídeos de negras en tetas",
+        answer: "Valeria",
+        hint: "Como la canción de Shakira: ciega sordomuda."
+      },
+      {
+        person: "4",
+        question: "Persona que salió en una película",
+        answer: "Laura",
+        hint: "Su gesto favorito sale de un corazón"
+      },
+      {
+        person: "5",
+        question: "Persona que siempre lleva plátanos en el bolsillo",
         answer: "Elvin",
-        hint: "Empieza por E."
+        hint: "Tridente."
       },
       {
-        person: "Vane",
-        question: "¿Qué invitada encontró el QR o la pista siguiente?",
+        person: "6",
+        question: "Persona que comería lotus de par en par",
+        answer: "Alex",
+        hint: "Le encantan los coches."
+      },
+      {
+        person: "7",
+        question: "Persona que ama los audios",
         answer: "Vane",
-        hint: "Empieza por V."
+        hint: "No puede decir lo mismo de los gatos."
+      }
+      {
+        person: "8",
+        question: "Completa la frase: ¿Cuántos ______ te caben?",
+        answer: "Gormitis",
+        hint: "Vamos no me jodas."
+      }
+    {
+        person: "9",
+        question: "Tu regalo por los 19",
+        answer: "Jagermëister",
+        hint: "Fue una bebida personalizada (pista fácil, que se que llevas mal las fechas)."
+      }
+    {
+        person: "10",
+        question: "Tu cena de hoy",
+        answer: "Takoyakis",
+        hint: "Bolitas."
       }
     ];
 
@@ -322,9 +398,11 @@
     const counter = document.getElementById("counter");
     const lettersContainer = document.getElementById("lettersContainer");
     const finalLocation = document.getElementById("finalLocation");
+    const answersSummary = document.getElementById("answersSummary");
 
     let currentIndex = 0;
     let collectedLetters = [];
+    let answeredWords = [];
 
     function normalize(text) {
       return text
@@ -339,7 +417,7 @@
       questions.forEach((q, index) => {
         const box = document.createElement("div");
         box.className = "letter-box";
-        box.textContent = collectedLetters[index] || "?";
+        box.textContent = "?";
         lettersContainer.appendChild(box);
       });
     }
@@ -357,10 +435,43 @@
       renderLetters();
     }
 
+    function highlightFirstLetter(word, index) {
+      const first = word.charAt(0);
+      const rest = word.slice(1);
+      const delay = index * 0.35;
+      return `<span class="highlight-letter" style="animation-delay:${delay}s">${first}</span>${rest}`;
+    }</span>${rest}`;
+    }
+
     function finishGame() {
       gameScreen.classList.add("hidden");
       finalScreen.classList.remove("hidden");
-      finalLocation.textContent = collectedLetters.join("");
+      finalLocation.textContent = "";
+
+      const location = collectedLetters.join("");
+      [...location].forEach((char, index) => {
+        const span = document.createElement("span");
+        span.textContent = char;
+        span.style.opacity = "0";
+        span.style.display = "inline-block";
+        span.style.transform = "translateY(10px) scale(0.96)";
+        span.style.animation = "revealLetter 0.45s ease forwards";
+        span.style.animationDelay = `${index * 0.18}s`;
+        finalLocation.appendChild(span);
+      });
+
+      answersSummary.classList.remove("hidden");
+      answersSummary.innerHTML = `
+        <div class="summary-list">
+          ${answeredWords.map((word, index) => `
+            <div class="summary-item" style="animation-delay:${index * 0.2}s">
+              <strong>${index + 1}.</strong> ${highlightFirstLetter(word, index)}
+            </div>
+          `).join("")}
+        </div>
+      `;
+
+      finalScreen.querySelector('.final-card').appendChild(answersSummary);
     }
 
     function checkAnswer() {
@@ -381,6 +492,7 @@
 
       const firstLetter = questions[currentIndex].answer.charAt(0).toUpperCase();
       collectedLetters[currentIndex] = firstLetter;
+      answeredWords[currentIndex] = questions[currentIndex].answer;
       answerStatus.textContent = `Correcto. Has conseguido la letra ${firstLetter}.`;
       answerStatus.className = "status ok";
       renderLetters();
